@@ -1,0 +1,8 @@
+*.sqlite
+*.log
+\#*\#
+.\#*
+*~
+docker-compose.yaml
+.idea
+data/*

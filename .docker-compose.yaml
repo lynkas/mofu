@@ -1,0 +1,15 @@
+version: "3.9"
+services:
+  mofu:
+    build: .
+    environment:
+      TELEGRAM_BOT_TOKEN: bot-token
+      CONTROL_ROOM_ID: control-room
+      WARNING_ROOM_ID: warning-room
+      BROADCAST_ROOM_ID: broadcast-room
+      TWITTER_API_TOKEN: twitter-token
+      DEV: 1
+    volumes:
+      - ./data:/app/data/
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
