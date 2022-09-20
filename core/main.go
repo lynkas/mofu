@@ -223,16 +223,14 @@ func (c *Core) updateSubscribe() bool {
 	if sub == nil {
 		return false
 	}
-	medias, err := c.GetUserNewTweets(sub.ID, sub.LastLandmark, 10)
+	medias, err := c.GetUserNewTweets(sub.ID, sub.LastLandmark, 20)
 	if err != nil {
-		log.Warn(err)
+		log.Warn(fmt.Sprintf("Update failed: \n"+
+			"%s\n\n"+
+			"<code>%s</code> 更新失败", err.Error(), sub.Username))
 		return false
 	}
-	//log.Debug("msgs ", len(msgs))
-	//
-	//for _, msg := range msgs {
-	//	c.decide <- value.ToSendMediaMessage(msg)
-	//}
+
 	return len(medias) != 0
 }
 
