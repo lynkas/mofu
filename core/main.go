@@ -8,6 +8,7 @@ import (
 	"github.com/g8rswimmer/go-twitter"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/exp/maps"
+	"golang.org/x/exp/rand"
 	"golang.org/x/exp/slices"
 	"mofu/ent"
 	"mofu/ent/history"
@@ -203,9 +204,7 @@ func (c *Core) UpdateSubscribe() {
 	for {
 		updated := false
 		updated = updated || c.updateSubscribe()
-		if !updated {
-			<-time.After(time.Second * 2)
-		}
+		<-time.After(time.Second * time.Duration(1+rand.Intn(10)/10.0))
 	}
 }
 
