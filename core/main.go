@@ -204,7 +204,7 @@ func (c *Core) UpdateSubscribe() {
 	for {
 		updated := false
 		updated = updated || c.updateSubscribe()
-		<-time.After(time.Second * time.Duration(1+rand.Intn(10)/10.0))
+		<-time.After(time.Second * time.Duration(2+rand.Intn(10)/10.0))
 	}
 }
 
