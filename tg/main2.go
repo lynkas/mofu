@@ -4,9 +4,11 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	log "github.com/sirupsen/logrus"
+	olog "log"
 	"mofu/value"
 	"regexp"
 	"strings"
+	"time"
 )
 
 type ITelegramFunc interface {
@@ -100,27 +102,30 @@ func (t *Telegram) Update() {
 	updateConfig := tgbotapi.NewUpdate(0)
 	updateConfig.Timeout = 60
 	updates := t.bot.GetUpdatesChan(updateConfig)
-
-	for update := range updates {
-		if update.CallbackQuery != nil {
-			t.keyboardCommand(update)
-		} else if update.Message != nil {
-			if update.Message.IsCommand() {
-				if t.validCommand(update) {
-					t.chatCommand(update)
-				}
-			} else {
-				if validTweetID(update.Message.Text) {
-					t.processSingle(update)
+	for {
+		for update := range updates {
+			if update.CallbackQuery != nil {
+				t.keyboardCommand(update)
+			} else if update.Message != nil {
+				if update.Message.IsCommand() {
+					if t.validCommand(update) {
+						t.chatCommand(update)
+					}
 				} else {
-					if !update.Message.From.IsBot {
+					if validTweetID(update.Message.Text) {
+						t.processSingle(update)
+					} else {
+						if !update.Message.From.IsBot {
+						}
 					}
 				}
-			}
 
-		} else {
-			//TODO
+			} else {
+				//TODO
+			}
 		}
+		olog.Println("bot failed")
+		time.Sleep(time.Minute)
 	}
 }
 
