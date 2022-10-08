@@ -99,10 +99,10 @@ func (t *Telegram) RunTask() {
 }
 
 func (t *Telegram) Update() {
-	updateConfig := tgbotapi.NewUpdate(0)
-	updateConfig.Timeout = 60
-	updates := t.bot.GetUpdatesChan(updateConfig)
 	for {
+		updateConfig := tgbotapi.NewUpdate(0)
+		updateConfig.Timeout = 60
+		updates := t.bot.GetUpdatesChan(updateConfig)
 		for update := range updates {
 			if update.CallbackQuery != nil {
 				t.keyboardCommand(update)
