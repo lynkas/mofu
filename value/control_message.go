@@ -4,6 +4,7 @@ import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"mofu/tw"
+	"strings"
 )
 
 type controlMessage struct {
@@ -28,11 +29,20 @@ func (c *controlMessage) Author() string {
 }
 
 func (c *controlMessage) Tags() []string {
-	return []string{c.media.Key()}
+	key := c.media.Key()
+	if len(key) > 10 {
+		return []string{key[len(key)-10:]}
+	}
+	return []string{key}
 }
 
 func (c *controlMessage) AdditionalContent() string {
-	return c.media.URL()
+	builder := strings.Builder{}
+	builder.WriteString(c.media.URL())
+	if c.AuthorIsNotFollowed {
+		builder.WriteString(" 未关注的作者")
+	}
+	return builder.String()
 }
 
 func (c *controlMessage) isRetweet() bool {
@@ -55,14 +65,10 @@ func (c *controlMessage) Keyboard() *tgbotapi.InlineKeyboardMarkup {
 		tgbotapi.NewInlineKeyboardButtonData("发！", fmt.Sprintf("/decide %d.%d_%s", Controlled|Decided|Approved, No, c.media.Key())),
 		tgbotapi.NewInlineKeyboardButtonData("NSFW，发！", fmt.Sprintf("/decide %d.%d_%s", Controlled|Decided|Approved, Nsfw, c.media.Key())),
 	)
-	second := tgbotapi.NewInlineKeyboardRow(
-		tgbotapi.NewInlineKeyboardButtonData("是无关的图", fmt.Sprintf("/decide %d.%d_%s", Controlled|Decided, No, c.media.Key())),
-	)
-
 	if c.AuthorIsNotFollowed {
 		first = append(first, tgbotapi.NewInlineKeyboardButtonData("关注原作者", fmt.Sprintf("/kadd %s %s", c.media.Author().Username(), c.media.Key())))
 	}
 
-	keyboard := tgbotapi.NewInlineKeyboardMarkup(first, second)
+	keyboard := tgbotapi.NewInlineKeyboardMarkup(first)
 	return &keyboard
 }
