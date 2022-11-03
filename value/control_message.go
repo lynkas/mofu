@@ -29,11 +29,7 @@ func (c *controlMessage) Author() string {
 }
 
 func (c *controlMessage) Tags() []string {
-	key := c.media.Key()
-	if len(key) > 10 {
-		return []string{key[len(key)-10:]}
-	}
-	return []string{key}
+	return []string{"tw" + c.media.Key()}
 }
 
 func (c *controlMessage) AdditionalContent() string {
