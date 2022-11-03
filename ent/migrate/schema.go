@@ -36,11 +36,6 @@ var (
 				Columns: []*schema.Column{HistoriesColumns[3]},
 			},
 			{
-				Name:    "history_content_flag",
-				Unique:  false,
-				Columns: []*schema.Column{HistoriesColumns[4]},
-			},
-			{
 				Name:    "history_sent_flag",
 				Unique:  false,
 				Columns: []*schema.Column{HistoriesColumns[5]},
