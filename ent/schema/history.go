@@ -35,7 +35,6 @@ func (History) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("create_at"),
 		index.Fields("last_update"),
-		index.Fields("content_flag"),
 		index.Fields("sent_flag"),
 		index.Fields("id"),
 	}
