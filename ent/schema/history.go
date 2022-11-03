@@ -3,6 +3,7 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 	"time"
 )
 
@@ -28,4 +29,14 @@ func (History) Fields() []ent.Field {
 // Edges of the History.
 func (History) Edges() []ent.Edge {
 	return nil
+}
+
+func (History) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("create_at"),
+		index.Fields("last_update"),
+		index.Fields("content_flag"),
+		index.Fields("sent_flag"),
+		index.Fields("id"),
+	}
 }

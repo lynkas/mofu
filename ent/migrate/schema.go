@@ -24,6 +24,33 @@ var (
 		Name:       "histories",
 		Columns:    HistoriesColumns,
 		PrimaryKey: []*schema.Column{HistoriesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "history_create_at",
+				Unique:  false,
+				Columns: []*schema.Column{HistoriesColumns[2]},
+			},
+			{
+				Name:    "history_last_update",
+				Unique:  false,
+				Columns: []*schema.Column{HistoriesColumns[3]},
+			},
+			{
+				Name:    "history_content_flag",
+				Unique:  false,
+				Columns: []*schema.Column{HistoriesColumns[4]},
+			},
+			{
+				Name:    "history_sent_flag",
+				Unique:  false,
+				Columns: []*schema.Column{HistoriesColumns[5]},
+			},
+			{
+				Name:    "history_id",
+				Unique:  false,
+				Columns: []*schema.Column{HistoriesColumns[0]},
+			},
+		},
 	}
 	// SettingsColumns holds the columns for the "settings" table.
 	SettingsColumns = []*schema.Column{
