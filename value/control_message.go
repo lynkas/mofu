@@ -34,7 +34,7 @@ func (c *controlMessage) Tags() []string {
 
 func (c *controlMessage) AdditionalContent() string {
 	builder := strings.Builder{}
-	builder.WriteString(c.media.URL())
+	builder.WriteString(fmt.Sprintf("<a href='%s'>查看原图</a>", c.media.URL()))
 	if c.AuthorIsNotFollowed {
 		builder.WriteString(" 未关注的作者")
 	}

@@ -36,7 +36,7 @@ func (c *ProcessedControlMessage) Tags() []string {
 
 func (c *ProcessedControlMessage) AdditionalContent() string {
 	builder := strings.Builder{}
-	builder.WriteString(c.media.URL())
+	builder.WriteString(fmt.Sprintf("<a href='%s'>查看原图</a>", c.media.URL()))
 	builder.WriteString("\n")
 	builder.WriteString(fmt.Sprintf(">> %s", c.operator))
 	return builder.String()
