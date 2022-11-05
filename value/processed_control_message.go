@@ -3,6 +3,7 @@ package value
 import (
 	"fmt"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"strings"
 )
 
 type ProcessedControlMessage struct {
@@ -18,7 +19,8 @@ func (c *ProcessedControlMessage) Content() string {
 }
 
 func (c *ProcessedControlMessage) Tags() []string {
-	tags := []string{c.media.Key()}
+	tags := []string{"tw" + c.media.Key()}
+
 	if c.approved == Approved {
 		tags = append(tags, "通过")
 	} else {
@@ -33,7 +35,11 @@ func (c *ProcessedControlMessage) Tags() []string {
 }
 
 func (c *ProcessedControlMessage) AdditionalContent() string {
-	return fmt.Sprintf(">> %s", c.operator)
+	builder := strings.Builder{}
+	builder.WriteString(c.media.URL())
+	builder.WriteString("\n")
+	builder.WriteString(fmt.Sprintf(">> %s", c.operator))
+	return builder.String()
 }
 
 func (c *ProcessedControlMessage) Message(chatID int64, replyID int) tgbotapi.Chattable {
