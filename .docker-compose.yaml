@@ -13,3 +13,4 @@ services:
       - ./data:/app/data/
     stdin_open: true # docker run -i
     tty: true        # docker run -t
+    restart: on-failure
