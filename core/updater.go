@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"entgo.io/ent/dialect/sql"
 	log "github.com/sirupsen/logrus"
 	"mofu/ent"
 	"mofu/ent/history"
@@ -61,7 +62,9 @@ func (s *SendUpdater) query() ([]*ent.History, error) {
 			history.SentFlagEQ(value.Controlled|value.Decided|value.Approved|value.No),
 			history.LastUpdateLT(time.Now().Add(-s.cooldown)),
 			history.SendingContentNEQ([]byte("{}"))),
-	).Order(ent.Asc(history.FieldCreateAt)).Limit(s.together).All(context.Background())
+	).Order(func(s *sql.Selector) {
+		s.OrderBy("RAND()")
+	}).Limit(s.together).All(context.Background())
 	if ent.IsNotFound(err) {
 		return nil, nil
 	}
