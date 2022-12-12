@@ -155,11 +155,29 @@ func (c *Core) RemoveSetting(key string) (value.IMessage, error) {
 	return c.ListSettings()
 }
 
+func (c *Core) sent(id string) (bool, error) {
+	return c.db.History.
+		Query().
+		Where(
+			history.ID(id),
+			history.SentFlagGTE(value.Controlled|value.Decided|value.Approved|value.Sent),
+		).
+		Exist(context.Background())
+}
 func (c *Core) UpdateHistoryFlag(id string, sent, nsfw int, operator string) (value.IMessage, error) {
-	data, err := c.db.History.UpdateOneID(id).SetSentFlag(sent).SetContentFlag(nsfw).Save(context.Background())
+	data, err := c.getHistoryByID(id)
 	if err != nil {
 		return nil, err
 	}
+	if data.SentFlag&value.Approved != 0 && sent&value.Approved != 0 {
+		sent = data.SentFlag
+	} else {
+		data, err = c.db.History.UpdateOneID(id).SetSentFlag(sent).SetContentFlag(nsfw).Save(context.Background())
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	media := tw.SingleMediaResultFrom(data.SendingContent)
 	msg := &value.MessageFactory{
 		AuthorIsNotFollowed: !c.HasSubscription(media.Author().ID()),
