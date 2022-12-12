@@ -35,5 +35,5 @@ func (c *setting) Run() (result value.MessageMakeup, err error) {
 		}
 	}
 
-	return value.ToSendTextMessage(msg), err
+	return value.ToTextMessage(msg), err
 }

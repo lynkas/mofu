@@ -44,7 +44,6 @@ func (c *decide) parse() error {
 }
 
 func (c *decide) Run() (value.MessageMakeup, error) {
-	c.commandRunner.GetHistory(c.id)
 	msg, err := c.commandRunner.UpdateHistoryFlag(c.id, c.sending, c.content, c.operator)
 
 	if err != nil {

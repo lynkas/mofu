@@ -8,6 +8,19 @@ import (
 	"mofu/ent"
 )
 
+// The AuthFunc type is an adapter to allow the use of ordinary
+// function as Auth mutator.
+type AuthFunc func(context.Context, *ent.AuthMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AuthFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	mv, ok := m.(*ent.AuthMutation)
+	if !ok {
+		return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AuthMutation", m)
+	}
+	return f(ctx, mv)
+}
+
 // The HistoryFunc type is an adapter to allow the use of ordinary
 // function as History mutator.
 type HistoryFunc func(context.Context, *ent.HistoryMutation) (ent.Value, error)

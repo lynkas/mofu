@@ -12,7 +12,11 @@ type IMessageMakeup interface {
 	EditMessage(chatID int64, replyID int) tgbotapi.Chattable
 }
 
-type MessageMakeup func(chatID int64, replyID int) tgbotapi.Chattable
+//type MessageMakeup struct {
+//	IMessage
+//}
+
+//type MessageMakeup func(chatID int64, replyID int) tgbotapi.Chattable
 
 type IMessage interface {
 	ImageURL() string

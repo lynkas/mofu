@@ -8,6 +8,18 @@ import (
 )
 
 var (
+	// AuthsColumns holds the columns for the "auths" table.
+	AuthsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "token", Type: field.TypeString},
+		{Name: "user", Type: field.TypeString},
+	}
+	// AuthsTable holds the schema information for the "auths" table.
+	AuthsTable = &schema.Table{
+		Name:       "auths",
+		Columns:    AuthsColumns,
+		PrimaryKey: []*schema.Column{AuthsColumns[0]},
+	}
 	// HistoriesColumns holds the columns for the "histories" table.
 	HistoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
@@ -75,6 +87,7 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AuthsTable,
 		HistoriesTable,
 		SettingsTable,
 		SubscriptionsTable,

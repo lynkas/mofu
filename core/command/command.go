@@ -10,6 +10,8 @@ type IRunner interface {
 	RemoveSubscription(username string) (value.IMessage, error)
 	UpdateHistoryFlag(key string, send int, content int, operator string) (value.IMessage, error)
 	GetHistory(key string) (value.IMessage, error)
+	WebAuth(user string) (value.IMessage, error)
+	WebDestroy(token string) (value.IMessage, error)
 	ListSettings() (value.IMessage, error)
 	SetSetting(key, val string) (value.IMessage, error)
 	RemoveSetting(key string) (value.IMessage, error)
@@ -34,17 +36,19 @@ func (c *command) trim() {
 	c.args = strings.Trim(c.args, " ")
 }
 
-func (c command) Run() (value.MessageMakeup, error) {
+func (c *command) Run() (value.MessageMakeup, error) {
 	return nil, nil
 }
 
 const (
-	Decide  = "/decide"
-	Log     = "/log"
-	Setting = "/setting"
-	Add     = "/add"
-	Kadd    = "/kadd"
-	Remove  = "/remove"
+	Decide     = "/decide"
+	Log        = "/log"
+	Setting    = "/setting"
+	Add        = "/add"
+	Kadd       = "/kadd"
+	Remove     = "/remove"
+	WebAuth    = "/web_auth"
+	WebDestroy = "/web_destroy"
 )
 
 func New(function, args, operator string, runner IRunner) (ICommand, error) {
@@ -67,6 +71,10 @@ func New(function, args, operator string, runner IRunner) (ICommand, error) {
 		commandObj = &setting{command: c}
 	case Remove:
 		commandObj = &remove{command: c}
+	case WebAuth:
+		commandObj = &webAuth{command: c, user: operator}
+	case WebDestroy:
+		commandObj = &webDestroy{command: c}
 	default:
 		commandObj = &c
 	}

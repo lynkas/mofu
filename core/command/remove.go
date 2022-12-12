@@ -22,5 +22,5 @@ func (c *remove) Run() (value.MessageMakeup, error) {
 	if err != nil {
 		return nil, err
 	}
-	return value.ToSendTextMessage(msg), err
+	return value.ToTextMessage(msg), err
 }

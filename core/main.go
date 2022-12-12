@@ -11,9 +11,11 @@ import (
 	"golang.org/x/exp/rand"
 	"golang.org/x/exp/slices"
 	"mofu/ent"
+	"mofu/ent/auth"
 	"mofu/ent/history"
 	"mofu/ent/subscription"
 	"mofu/tw"
+	"mofu/utils"
 	"mofu/value"
 	"time"
 )
@@ -52,6 +54,22 @@ func (c *Core) ListSettings() (value.IMessage, error) {
 	}
 
 	return result, nil
+}
+
+func (c *Core) Auth(ctx context.Context, token string) *string {
+	a, err := c.db.Auth.Query().Where(auth.Token(token)).Only(ctx)
+	if err != nil {
+		return nil
+	}
+	return &a.User
+}
+
+func (c *Core) ListHistory(ctx context.Context, timeBefore *int64, offset, limit int) ([]*ent.History, error) {
+	q := c.db.History.Query()
+	if timeBefore != nil {
+		q = q.Where(history.CreateAtLTE(time.Unix(0, *timeBefore)))
+	}
+	return q.Offset(offset).Limit(limit).All(ctx)
 }
 
 func (c *Core) AddSubscriptions(usernames []string) (value.IMessage, error) {
@@ -403,4 +421,23 @@ func (c *Core) GetHistory(key string) (value.IMessage, error) {
 	}
 	media := tw.SingleMediaResultFrom(h.SendingContent)
 	return value.NewControlMessage(media, !c.HasSubscription(media.Author().ID())), nil
+}
+func (c *Core) WebAuth(name string) (value.IMessage, error) {
+	randomString, err := utils.GenerateRandomString(128)
+	if err != nil {
+		return nil, err
+	}
+	_, err = c.db.Auth.Create().SetToken(randomString).SetUser(name).Save(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return value.NewText(fmt.Sprintf("<code>%s<code>", randomString)), nil
+}
+func (c *Core) WebDestroy(key string) (value.IMessage, error) {
+	_, err := c.db.Auth.Delete().Where(auth.Token(key)).Exec(context.Background())
+	if err != nil {
+		return nil, err
+	}
+	return value.NewText("删了"), nil
+
 }

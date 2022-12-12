@@ -50,6 +50,59 @@ func Message(chatID int64, replyID int, c IMessage) tgbotapi.Chattable {
 	return config
 }
 
+type MessageMakeup interface {
+	ToChattable(chatID int64, replyID int) tgbotapi.Chattable
+	ToMsg() IMessage
+}
+
+type msg struct {
+	IMessage
+}
+
+func (m *msg) ToMsg() IMessage {
+	return m
+}
+
+type editMessage struct {
+	msg
+}
+type sendMessage struct {
+	msg
+}
+type textMessage struct {
+	msg
+}
+
+func (c *editMessage) ToChattable(chatID int64, replyID int) tgbotapi.Chattable {
+	edit := tgbotapi.NewEditMessageCaption(chatID, replyID, c.Content())
+	edit.ParseMode = tgbotapi.ModeHTML
+	edit.ReplyMarkup = c.Keyboard()
+	return edit
+}
+
+func (c *sendMessage) ToChattable(chatID int64, replyID int) tgbotapi.Chattable {
+	config := tgbotapi.NewPhoto(chatID, tgbotapi.FileURL(c.ImageURL()))
+	config.ParseMode = tgbotapi.ModeHTML
+	config.Caption = c.Content()
+	config.ReplyToMessageID = replyID
+	config.ReplyMarkup = c.Keyboard()
+	return config
+}
+func (c *textMessage) ToChattable(chatID int64, replyID int) tgbotapi.Chattable {
+	return TextMessage(chatID, replyID, c)
+}
+
+func ToTextMessage(m IMessage) *textMessage {
+	return &textMessage{msg{m}}
+}
+func ToEditMediaMessage(m IMessage) *editMessage {
+	return &editMessage{msg{m}}
+}
+func ToSendMediaMessage(m IMessage) *sendMessage {
+	return &sendMessage{msg{m}}
+}
+
+/*
 func ToSendMediaMessage(c IMessage) MessageMakeup {
 	return func(chatID int64, replyID int) tgbotapi.Chattable {
 		config := tgbotapi.NewPhoto(chatID, tgbotapi.FileURL(c.ImageURL()))
@@ -68,4 +121,4 @@ func ToEditMediaMessage(c IMessage) MessageMakeup {
 		edit.ReplyMarkup = c.Keyboard()
 		return edit
 	}
-}
+}*/

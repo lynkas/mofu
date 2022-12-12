@@ -6,6 +6,9 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Auth is the predicate function for auth builders.
+type Auth func(*sql.Selector)
+
 // History is the predicate function for history builders.
 type History func(*sql.Selector)
 

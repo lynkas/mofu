@@ -38,8 +38,8 @@ func TextMessage(channelID int64, replyID int, t IMessage) tgbotapi.Chattable {
 	return msg
 }
 
-func ToSendTextMessage(t IMessage) MessageMakeup {
-	return func(chatID int64, replyID int) tgbotapi.Chattable {
-		return TextMessage(chatID, replyID, t)
-	}
-}
+//func ToSendTextMessage(t IMessage) MessageMakeup {
+//	return func(chatID int64, replyID int) tgbotapi.Chattable {
+//		return TextMessage(chatID, replyID, t)
+//	}
+//}

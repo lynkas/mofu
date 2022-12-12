@@ -9,6 +9,7 @@ import (
 	"mofu/ent"
 	"mofu/tg"
 	"mofu/tw"
+	"mofu/web"
 	"os"
 	"strconv"
 )
@@ -21,6 +22,9 @@ var (
 	TwitterApiToken    = os.Getenv("TWITTER_API_TOKEN")
 	Dev                = os.Getenv("Dev") == "1"
 )
+
+func init() {
+}
 
 func main() {
 	if !Dev {
@@ -49,9 +53,14 @@ func create() {
 	if !Dev {
 		log.SetOutput(telegram)
 	}
+
+	w := web.New(c)
+
 	go telegram.RunTask()
 	go telegram.Update()
 	go telegram.UpdateLog()
 	go c.UpdateSubscribe()
 	go c.Update()
+	//go w.Run()
+
 }
