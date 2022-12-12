@@ -17,15 +17,15 @@ type IWeb interface {
 func New(auth IWeb) *gin.Engine {
 	g := gin.Default()
 
-	g.Use(func(ctx *gin.Context) {
-		token := ctx.GetHeader("Authorization")
-		user := auth.Auth(ctx, token)
-		if user == nil {
-			ctx.Status(http.StatusUnauthorized)
-		} else {
-			ctx.Set("user", *user)
-		}
-	})
+	//g.Use(func(ctx *gin.Context) {
+	//	token := ctx.GetHeader("Authorization")
+	//	user := auth.Auth(ctx, token)
+	//	if user == nil {
+	//		ctx.Status(http.StatusUnauthorized)
+	//	} else {
+	//		ctx.Set("user", *user)
+	//	}
+	//})
 
 	g.POST("/command/", func(context *gin.Context) {
 		process(context, auth)

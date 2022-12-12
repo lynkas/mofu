@@ -61,6 +61,6 @@ func create() {
 	go telegram.UpdateLog()
 	go c.UpdateSubscribe()
 	go c.Update()
-	//go w.Run()
+	go w.Run()
 
 }
