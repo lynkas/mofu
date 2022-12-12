@@ -37,7 +37,7 @@ func (t *Telegram) command(commandFull string, update tgbotapi.Update, messageID
 		}
 		if !update.FromChat().IsPrivate() {
 			msg := value.TextMessage(update.FromChat().ID, update.Message.MessageID, value.NewText("私聊"))
-			_, err := t.Request(msg(chatID, messageID))
+			_, err := t.Request(msg)
 			if err != nil {
 				log.Warning(err)
 				return
