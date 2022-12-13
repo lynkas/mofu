@@ -40,8 +40,8 @@ func (t *Telegram) command(commandFull string, update tgbotapi.Update, messageID
 			_, err := t.Request(msg)
 			if err != nil {
 				log.Warning(err)
-				return
 			}
+			return
 		}
 	}
 
