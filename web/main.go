@@ -17,21 +17,21 @@ type IWeb interface {
 func New(auth IWeb) *gin.Engine {
 	g := gin.Default()
 
-	//g.Use(func(ctx *gin.Context) {
-	//	token := ctx.GetHeader("Authorization")
-	//	user := auth.Auth(ctx, token)
-	//	if user == nil {
-	//		ctx.Status(http.StatusUnauthorized)
-	//	} else {
-	//		ctx.Set("user", *user)
-	//	}
-	//})
+	g.Use(func(ctx *gin.Context) {
+		token := ctx.GetHeader("Authorization")
+		user := auth.Auth(ctx, token)
+		if user == nil {
+			ctx.Status(http.StatusUnauthorized)
+		} else {
+			ctx.Set("user", *user)
+		}
+	})
 
 	g.POST("/command/", func(context *gin.Context) {
 		process(context, auth)
 	})
 	g.GET("/", func(context *gin.Context) {
-		process(context, auth)
+		list(context, auth)
 	})
 
 	return g
@@ -57,8 +57,9 @@ func process(ctx *gin.Context, functions IWeb) {
 }
 
 type query struct {
-	TimeBefore    *int64
-	Offset, Limit int
+	TimeBefore *int64 `form:"time_before"`
+	Offset     int    `form:"offset"`
+	Limit      int    `form:"limit"`
 }
 
 func list(ctx *gin.Context, functions IWeb) {
@@ -67,7 +68,10 @@ func list(ctx *gin.Context, functions IWeb) {
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 	}
-	msg, err := functions.ListHistory(ctx, q.TimeBefore, q.Limit, q.Offset)
+	if q.Limit <= 0 || q.Limit >= 100 {
+		q.Limit = 100
+	}
+	msg, err := functions.ListHistory(ctx, q.TimeBefore, q.Offset, q.Limit)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return

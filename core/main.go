@@ -69,7 +69,7 @@ func (c *Core) ListHistory(ctx context.Context, timeBefore *int64, offset, limit
 	if timeBefore != nil {
 		q = q.Where(history.CreateAtLTE(time.Unix(0, *timeBefore)))
 	}
-	return q.Offset(offset).Limit(limit).All(ctx)
+	return q.Where(history.MentionedCountGTE(2)).Offset(offset).Limit(limit).Order(ent.Desc(history.FieldCreateAt)).All(ctx)
 }
 
 func (c *Core) AddSubscriptions(usernames []string) (value.IMessage, error) {
@@ -431,7 +431,7 @@ func (c *Core) WebAuth(name string) (value.IMessage, error) {
 	if err != nil {
 		return nil, err
 	}
-	return value.NewText(fmt.Sprintf("<code>%s<code>", randomString)), nil
+	return value.NewText(fmt.Sprintf("<code>%s</code>", randomString)), nil
 }
 func (c *Core) WebDestroy(key string) (value.IMessage, error) {
 	_, err := c.db.Auth.Delete().Where(auth.Token(key)).Exec(context.Background())
