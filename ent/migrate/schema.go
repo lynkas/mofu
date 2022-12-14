@@ -29,6 +29,7 @@ var (
 		{Name: "content_flag", Type: field.TypeInt, Nullable: true},
 		{Name: "sent_flag", Type: field.TypeInt, Nullable: true},
 		{Name: "mentioned_count", Type: field.TypeInt, Default: 1},
+		{Name: "take_effect_time", Type: field.TypeTime, Nullable: true},
 		{Name: "sending_content", Type: field.TypeBytes, Nullable: true},
 	}
 	// HistoriesTable holds the schema information for the "histories" table.

@@ -67,9 +67,9 @@ func (c *Core) Auth(ctx context.Context, token string) *string {
 func (c *Core) ListHistory(ctx context.Context, timeBefore *int64, offset, limit int) ([]*ent.History, error) {
 	q := c.db.History.Query()
 	if timeBefore != nil {
-		q = q.Where(history.CreateAtLTE(time.Unix(*timeBefore/1000, 0)))
+		q = q.Where(history.Or(history.TakeEffectTimeIsNil(), history.TakeEffectTimeLTE(time.Unix(*timeBefore/1000, 0))))
 	}
-	return q.Where(history.MentionedCountGTE(2)).Offset(offset).Limit(limit).Order(ent.Desc(history.FieldCreateAt)).All(ctx)
+	return q.Where(history.MentionedCountGTE(2)).Offset(offset).Limit(limit).Order(ent.Desc(history.FieldTakeEffectTime), ent.Desc(history.FieldCreateAt)).All(ctx)
 }
 
 func (c *Core) AddSubscriptions(usernames []string) (value.IMessage, error) {
@@ -144,7 +144,16 @@ func (c *Core) addHistory(media tw.ICompoundMedia, asSentControlled bool) error 
 }
 
 func (c *Core) addMentionedCount(key string) error {
-	err := c.db.History.UpdateOneID(key).AddMentionedCount(1).Exec(context.Background())
+	h, err := c.db.History.UpdateOneID(key).AddMentionedCount(1).Save(context.Background())
+	if err != nil {
+		return err
+	}
+	if h.MentionedCount == 2 {
+		err = h.Update().SetTakeEffectTime(time.Now()).Exec(context.Background())
+		if err != nil {
+			return err
+		}
+	}
 	return err
 }
 

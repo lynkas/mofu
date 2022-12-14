@@ -96,6 +96,20 @@ func (hc *HistoryCreate) SetNillableMentionedCount(i *int) *HistoryCreate {
 	return hc
 }
 
+// SetTakeEffectTime sets the "take_effect_time" field.
+func (hc *HistoryCreate) SetTakeEffectTime(t time.Time) *HistoryCreate {
+	hc.mutation.SetTakeEffectTime(t)
+	return hc
+}
+
+// SetNillableTakeEffectTime sets the "take_effect_time" field if the given value is not nil.
+func (hc *HistoryCreate) SetNillableTakeEffectTime(t *time.Time) *HistoryCreate {
+	if t != nil {
+		hc.SetTakeEffectTime(*t)
+	}
+	return hc
+}
+
 // SetSendingContent sets the "sending_content" field.
 func (hc *HistoryCreate) SetSendingContent(b []byte) *HistoryCreate {
 	hc.mutation.SetSendingContent(b)
@@ -296,6 +310,14 @@ func (hc *HistoryCreate) createSpec() (*History, *sqlgraph.CreateSpec) {
 			Column: history.FieldMentionedCount,
 		})
 		_node.MentionedCount = value
+	}
+	if value, ok := hc.mutation.TakeEffectTime(); ok {
+		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{
+			Type:   field.TypeTime,
+			Value:  value,
+			Column: history.FieldTakeEffectTime,
+		})
+		_node.TakeEffectTime = value
 	}
 	if value, ok := hc.mutation.SendingContent(); ok {
 		_spec.Fields = append(_spec.Fields, &sqlgraph.FieldSpec{

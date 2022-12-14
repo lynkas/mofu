@@ -412,6 +412,7 @@ type HistoryMutation struct {
 	addsent_flag       *int
 	mentioned_count    *int
 	addmentioned_count *int
+	take_effect_time   *time.Time
 	sending_content    *[]byte
 	clearedFields      map[string]struct{}
 	done               bool
@@ -827,6 +828,55 @@ func (m *HistoryMutation) ResetMentionedCount() {
 	m.addmentioned_count = nil
 }
 
+// SetTakeEffectTime sets the "take_effect_time" field.
+func (m *HistoryMutation) SetTakeEffectTime(t time.Time) {
+	m.take_effect_time = &t
+}
+
+// TakeEffectTime returns the value of the "take_effect_time" field in the mutation.
+func (m *HistoryMutation) TakeEffectTime() (r time.Time, exists bool) {
+	v := m.take_effect_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTakeEffectTime returns the old "take_effect_time" field's value of the History entity.
+// If the History object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *HistoryMutation) OldTakeEffectTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTakeEffectTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTakeEffectTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTakeEffectTime: %w", err)
+	}
+	return oldValue.TakeEffectTime, nil
+}
+
+// ClearTakeEffectTime clears the value of the "take_effect_time" field.
+func (m *HistoryMutation) ClearTakeEffectTime() {
+	m.take_effect_time = nil
+	m.clearedFields[history.FieldTakeEffectTime] = struct{}{}
+}
+
+// TakeEffectTimeCleared returns if the "take_effect_time" field was cleared in this mutation.
+func (m *HistoryMutation) TakeEffectTimeCleared() bool {
+	_, ok := m.clearedFields[history.FieldTakeEffectTime]
+	return ok
+}
+
+// ResetTakeEffectTime resets all changes to the "take_effect_time" field.
+func (m *HistoryMutation) ResetTakeEffectTime() {
+	m.take_effect_time = nil
+	delete(m.clearedFields, history.FieldTakeEffectTime)
+}
+
 // SetSendingContent sets the "sending_content" field.
 func (m *HistoryMutation) SetSendingContent(b []byte) {
 	m.sending_content = &b
@@ -895,7 +945,7 @@ func (m *HistoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *HistoryMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.creator_id != nil {
 		fields = append(fields, history.FieldCreatorID)
 	}
@@ -913,6 +963,9 @@ func (m *HistoryMutation) Fields() []string {
 	}
 	if m.mentioned_count != nil {
 		fields = append(fields, history.FieldMentionedCount)
+	}
+	if m.take_effect_time != nil {
+		fields = append(fields, history.FieldTakeEffectTime)
 	}
 	if m.sending_content != nil {
 		fields = append(fields, history.FieldSendingContent)
@@ -937,6 +990,8 @@ func (m *HistoryMutation) Field(name string) (ent.Value, bool) {
 		return m.SentFlag()
 	case history.FieldMentionedCount:
 		return m.MentionedCount()
+	case history.FieldTakeEffectTime:
+		return m.TakeEffectTime()
 	case history.FieldSendingContent:
 		return m.SendingContent()
 	}
@@ -960,6 +1015,8 @@ func (m *HistoryMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldSentFlag(ctx)
 	case history.FieldMentionedCount:
 		return m.OldMentionedCount(ctx)
+	case history.FieldTakeEffectTime:
+		return m.OldTakeEffectTime(ctx)
 	case history.FieldSendingContent:
 		return m.OldSendingContent(ctx)
 	}
@@ -1012,6 +1069,13 @@ func (m *HistoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMentionedCount(v)
+		return nil
+	case history.FieldTakeEffectTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTakeEffectTime(v)
 		return nil
 	case history.FieldSendingContent:
 		v, ok := value.([]byte)
@@ -1095,6 +1159,9 @@ func (m *HistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(history.FieldSentFlag) {
 		fields = append(fields, history.FieldSentFlag)
 	}
+	if m.FieldCleared(history.FieldTakeEffectTime) {
+		fields = append(fields, history.FieldTakeEffectTime)
+	}
 	if m.FieldCleared(history.FieldSendingContent) {
 		fields = append(fields, history.FieldSendingContent)
 	}
@@ -1117,6 +1184,9 @@ func (m *HistoryMutation) ClearField(name string) error {
 		return nil
 	case history.FieldSentFlag:
 		m.ClearSentFlag()
+		return nil
+	case history.FieldTakeEffectTime:
+		m.ClearTakeEffectTime()
 		return nil
 	case history.FieldSendingContent:
 		m.ClearSendingContent()
@@ -1146,6 +1216,9 @@ func (m *HistoryMutation) ResetField(name string) error {
 		return nil
 	case history.FieldMentionedCount:
 		m.ResetMentionedCount()
+		return nil
+	case history.FieldTakeEffectTime:
+		m.ResetTakeEffectTime()
 		return nil
 	case history.FieldSendingContent:
 		m.ResetSendingContent()

@@ -23,6 +23,8 @@ const (
 	FieldSentFlag = "sent_flag"
 	// FieldMentionedCount holds the string denoting the mentioned_count field in the database.
 	FieldMentionedCount = "mentioned_count"
+	// FieldTakeEffectTime holds the string denoting the take_effect_time field in the database.
+	FieldTakeEffectTime = "take_effect_time"
 	// FieldSendingContent holds the string denoting the sending_content field in the database.
 	FieldSendingContent = "sending_content"
 	// Table holds the table name of the history in the database.
@@ -38,6 +40,7 @@ var Columns = []string{
 	FieldContentFlag,
 	FieldSentFlag,
 	FieldMentionedCount,
+	FieldTakeEffectTime,
 	FieldSendingContent,
 }
 

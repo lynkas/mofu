@@ -28,6 +28,8 @@ type History struct {
 	SentFlag int `json:"sent_flag,omitempty"`
 	// MentionedCount holds the value of the "mentioned_count" field.
 	MentionedCount int `json:"mentioned_count,omitempty"`
+	// TakeEffectTime holds the value of the "take_effect_time" field.
+	TakeEffectTime time.Time `json:"take_effect_time,omitempty"`
 	// SendingContent holds the value of the "sending_content" field.
 	SendingContent []byte `json:"sending_content,omitempty"`
 }
@@ -43,7 +45,7 @@ func (*History) scanValues(columns []string) ([]interface{}, error) {
 			values[i] = new(sql.NullInt64)
 		case history.FieldID, history.FieldCreatorID:
 			values[i] = new(sql.NullString)
-		case history.FieldCreateAt, history.FieldLastUpdate:
+		case history.FieldCreateAt, history.FieldLastUpdate, history.FieldTakeEffectTime:
 			values[i] = new(sql.NullTime)
 		default:
 			return nil, fmt.Errorf("unexpected column %q for type History", columns[i])
@@ -102,6 +104,12 @@ func (h *History) assignValues(columns []string, values []interface{}) error {
 			} else if value.Valid {
 				h.MentionedCount = int(value.Int64)
 			}
+		case history.FieldTakeEffectTime:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field take_effect_time", values[i])
+			} else if value.Valid {
+				h.TakeEffectTime = value.Time
+			}
 		case history.FieldSendingContent:
 			if value, ok := values[i].(*[]byte); !ok {
 				return fmt.Errorf("unexpected type %T for field sending_content", values[i])
@@ -153,6 +161,9 @@ func (h *History) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("mentioned_count=")
 	builder.WriteString(fmt.Sprintf("%v", h.MentionedCount))
+	builder.WriteString(", ")
+	builder.WriteString("take_effect_time=")
+	builder.WriteString(h.TakeEffectTime.Format(time.ANSIC))
 	builder.WriteString(", ")
 	builder.WriteString("sending_content=")
 	builder.WriteString(fmt.Sprintf("%v", h.SendingContent))

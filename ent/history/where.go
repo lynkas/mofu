@@ -122,6 +122,13 @@ func MentionedCount(v int) predicate.History {
 	})
 }
 
+// TakeEffectTime applies equality check predicate on the "take_effect_time" field. It's identical to TakeEffectTimeEQ.
+func TakeEffectTime(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTakeEffectTime), v))
+	})
+}
+
 // SendingContent applies equality check predicate on the "sending_content" field. It's identical to SendingContentEQ.
 func SendingContent(v []byte) predicate.History {
 	return predicate.History(func(s *sql.Selector) {
@@ -573,6 +580,84 @@ func MentionedCountLT(v int) predicate.History {
 func MentionedCountLTE(v int) predicate.History {
 	return predicate.History(func(s *sql.Selector) {
 		s.Where(sql.LTE(s.C(FieldMentionedCount), v))
+	})
+}
+
+// TakeEffectTimeEQ applies the EQ predicate on the "take_effect_time" field.
+func TakeEffectTimeEQ(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.EQ(s.C(FieldTakeEffectTime), v))
+	})
+}
+
+// TakeEffectTimeNEQ applies the NEQ predicate on the "take_effect_time" field.
+func TakeEffectTimeNEQ(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.NEQ(s.C(FieldTakeEffectTime), v))
+	})
+}
+
+// TakeEffectTimeIn applies the In predicate on the "take_effect_time" field.
+func TakeEffectTimeIn(vs ...time.Time) predicate.History {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.In(s.C(FieldTakeEffectTime), v...))
+	})
+}
+
+// TakeEffectTimeNotIn applies the NotIn predicate on the "take_effect_time" field.
+func TakeEffectTimeNotIn(vs ...time.Time) predicate.History {
+	v := make([]interface{}, len(vs))
+	for i := range v {
+		v[i] = vs[i]
+	}
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.NotIn(s.C(FieldTakeEffectTime), v...))
+	})
+}
+
+// TakeEffectTimeGT applies the GT predicate on the "take_effect_time" field.
+func TakeEffectTimeGT(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.GT(s.C(FieldTakeEffectTime), v))
+	})
+}
+
+// TakeEffectTimeGTE applies the GTE predicate on the "take_effect_time" field.
+func TakeEffectTimeGTE(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.GTE(s.C(FieldTakeEffectTime), v))
+	})
+}
+
+// TakeEffectTimeLT applies the LT predicate on the "take_effect_time" field.
+func TakeEffectTimeLT(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.LT(s.C(FieldTakeEffectTime), v))
+	})
+}
+
+// TakeEffectTimeLTE applies the LTE predicate on the "take_effect_time" field.
+func TakeEffectTimeLTE(v time.Time) predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.LTE(s.C(FieldTakeEffectTime), v))
+	})
+}
+
+// TakeEffectTimeIsNil applies the IsNil predicate on the "take_effect_time" field.
+func TakeEffectTimeIsNil() predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.IsNull(s.C(FieldTakeEffectTime)))
+	})
+}
+
+// TakeEffectTimeNotNil applies the NotNil predicate on the "take_effect_time" field.
+func TakeEffectTimeNotNil() predicate.History {
+	return predicate.History(func(s *sql.Selector) {
+		s.Where(sql.NotNull(s.C(FieldTakeEffectTime)))
 	})
 }
 
