@@ -21,6 +21,7 @@ var (
 	WarningRoomID, _   = strconv.ParseInt(os.Getenv("WARNING_ROOM_ID"), 10, 64)
 	TwitterApiToken    = os.Getenv("TWITTER_API_TOKEN")
 	Dev                = os.Getenv("Dev") == "1"
+	PORT               = os.Getenv("PORT")
 )
 
 func init() {
@@ -61,6 +62,10 @@ func create() {
 	go telegram.UpdateLog()
 	go c.UpdateSubscribe()
 	go c.Update()
-	go w.Run()
+	if PORT != "" {
+		go w.Run(PORT)
+	} else {
+		go w.Run()
+	}
 
 }
