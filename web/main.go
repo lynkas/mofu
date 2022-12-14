@@ -10,7 +10,7 @@ import (
 
 type IWeb interface {
 	Auth(ctx context.Context, token string) *string
-	CommandProcess(command string, args string, operator string) (value.MessageMakeup, error)
+	UpdateHistoryFlag(id string, sent, nsfw int, operator string) (value.IMessage, error)
 	ListHistory(ctx context.Context, timeBefore *int64, offset, limit int) ([]*ent.History, error)
 }
 
@@ -18,16 +18,16 @@ func New(auth IWeb) *gin.Engine {
 	g := gin.Default()
 
 	g.Use(func(ctx *gin.Context) {
-		token := ctx.GetHeader("Authorization")
+		token := ctx.Query("token")
 		user := auth.Auth(ctx, token)
 		if user == nil {
-			ctx.Status(http.StatusUnauthorized)
+			ctx.AbortWithStatus(http.StatusUnauthorized)
 		} else {
 			ctx.Set("user", *user)
 		}
 	})
 
-	g.POST("/command/", func(context *gin.Context) {
+	g.GET("/command/", func(context *gin.Context) {
 		process(context, auth)
 	})
 	g.GET("/", func(context *gin.Context) {
@@ -38,22 +38,33 @@ func New(auth IWeb) *gin.Engine {
 }
 
 type command struct {
-	Command string
-	Args    string
+	ID      string `form:"id"`
+	Approve bool   `form:"approve"`
+	NSFW    bool   `form:"nsfw"`
 }
 
 func process(ctx *gin.Context, functions IWeb) {
 	var c command
-	err := ctx.ShouldBindJSON(&c)
+	err := ctx.ShouldBindQuery(&c)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
 	}
-	msg, err := functions.CommandProcess(c.Command, c.Args, ctx.MustGet("user").(string))
+	base := value.Controlled
+	nsfw := value.No
+	if c.Approve {
+		base = base | value.Decided | value.Approved
+	}
+	if c.NSFW {
+		nsfw = value.Nsfw
+	}
+	msg, err := functions.UpdateHistoryFlag(c.ID, base, nsfw, ctx.MustGet("user").(string))
+
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"content": msg.ToMsg().Content()})
+	ctx.JSON(http.StatusOK, gin.H{"content": msg.Content()})
 }
 
 type query struct {
@@ -71,6 +82,7 @@ func list(ctx *gin.Context, functions IWeb) {
 	if q.Limit <= 0 || q.Limit >= 100 {
 		q.Limit = 100
 	}
+	println(*q.TimeBefore)
 	msg, err := functions.ListHistory(ctx, q.TimeBefore, q.Offset, q.Limit)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, err)
