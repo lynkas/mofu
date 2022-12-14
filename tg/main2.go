@@ -19,7 +19,7 @@ type ITelegramFunc interface {
 }
 
 func (t *Telegram) command(commandFull string, update tgbotapi.Update, messageID int) {
-	chatID := t.controlRoomID
+	chatID := update.FromChat().ID
 	operator := update.SentFrom()
 	if !strings.HasPrefix(commandFull, "/") {
 		commandFull = "/decide " + commandFull

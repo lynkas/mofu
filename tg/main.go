@@ -68,7 +68,7 @@ func (t *Telegram) isAdmin(sender *tgbotapi.User) bool {
 }
 
 func (t *Telegram) validCommand(update tgbotapi.Update) bool {
-	return (update.Message != nil || update.CallbackQuery != nil) && t.isAdmin(update.CallbackQuery.From)
+	return update.Message != nil && t.isAdmin(update.Message.From) || update.CallbackQuery != nil && t.isAdmin(update.CallbackQuery.From)
 }
 
 func (t *Telegram) Send(msg tgbotapi.Chattable) (tgbotapi.Message, error) {
