@@ -9,8 +9,13 @@ services:
       BROADCAST_ROOM_ID: broadcast-room
       TWITTER_API_TOKEN: twitter-token
       DEV: 1
+      DATABASE: postgres://database/postgres
     volumes:
       - ./data:/app/data/
     stdin_open: true # docker run -i
     tty: true        # docker run -t
     restart: on-failure
+  database:
+    image: "postgres:15.1"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust

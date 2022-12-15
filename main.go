@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"entgo.io/ent/dialect"
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
 	"mofu/core"
 	"mofu/ent"
@@ -22,6 +22,7 @@ var (
 	TwitterApiToken    = os.Getenv("TWITTER_API_TOKEN")
 	Dev                = os.Getenv("Dev") == "1"
 	PORT               = os.Getenv("PORT")
+	Database           = os.Getenv("DATABASE")
 )
 
 func init() {
@@ -37,7 +38,7 @@ func main() {
 }
 
 func create() {
-	client, err := ent.Open(dialect.SQLite, "./data/identifier.sqlite?_fk=1")
+	client, err := ent.Open(dialect.Postgres, Database)
 	if err != nil {
 		panic(err)
 	}
