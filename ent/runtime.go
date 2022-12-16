@@ -28,4 +28,8 @@ func init() {
 	historyDescMentionedCount := historyFields[6].Descriptor()
 	// history.DefaultMentionedCount holds the default value on creation for the mentioned_count field.
 	history.DefaultMentionedCount = historyDescMentionedCount.Default.(int)
+	// historyDescTakeEffectTime is the schema descriptor for take_effect_time field.
+	historyDescTakeEffectTime := historyFields[7].Descriptor()
+	// history.DefaultTakeEffectTime holds the default value on creation for the take_effect_time field.
+	history.DefaultTakeEffectTime = historyDescTakeEffectTime.Default.(time.Time)
 }

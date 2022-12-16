@@ -22,7 +22,7 @@ func (History) Fields() []ent.Field {
 		field.Int("content_flag").Optional(),
 		field.Int("sent_flag").Optional(),
 		field.Int("mentioned_count").Default(1),
-		field.Time("take_effect_time").Optional(),
+		field.Time("take_effect_time").Default(time.Unix(0, 0)),
 		field.Bytes("sending_content").Optional(),
 	}
 }

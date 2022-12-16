@@ -859,22 +859,9 @@ func (m *HistoryMutation) OldTakeEffectTime(ctx context.Context) (v time.Time, e
 	return oldValue.TakeEffectTime, nil
 }
 
-// ClearTakeEffectTime clears the value of the "take_effect_time" field.
-func (m *HistoryMutation) ClearTakeEffectTime() {
-	m.take_effect_time = nil
-	m.clearedFields[history.FieldTakeEffectTime] = struct{}{}
-}
-
-// TakeEffectTimeCleared returns if the "take_effect_time" field was cleared in this mutation.
-func (m *HistoryMutation) TakeEffectTimeCleared() bool {
-	_, ok := m.clearedFields[history.FieldTakeEffectTime]
-	return ok
-}
-
 // ResetTakeEffectTime resets all changes to the "take_effect_time" field.
 func (m *HistoryMutation) ResetTakeEffectTime() {
 	m.take_effect_time = nil
-	delete(m.clearedFields, history.FieldTakeEffectTime)
 }
 
 // SetSendingContent sets the "sending_content" field.
@@ -1159,9 +1146,6 @@ func (m *HistoryMutation) ClearedFields() []string {
 	if m.FieldCleared(history.FieldSentFlag) {
 		fields = append(fields, history.FieldSentFlag)
 	}
-	if m.FieldCleared(history.FieldTakeEffectTime) {
-		fields = append(fields, history.FieldTakeEffectTime)
-	}
 	if m.FieldCleared(history.FieldSendingContent) {
 		fields = append(fields, history.FieldSendingContent)
 	}
@@ -1184,9 +1168,6 @@ func (m *HistoryMutation) ClearField(name string) error {
 		return nil
 	case history.FieldSentFlag:
 		m.ClearSentFlag()
-		return nil
-	case history.FieldTakeEffectTime:
-		m.ClearTakeEffectTime()
 		return nil
 	case history.FieldSendingContent:
 		m.ClearSendingContent()

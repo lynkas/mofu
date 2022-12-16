@@ -647,20 +647,6 @@ func TakeEffectTimeLTE(v time.Time) predicate.History {
 	})
 }
 
-// TakeEffectTimeIsNil applies the IsNil predicate on the "take_effect_time" field.
-func TakeEffectTimeIsNil() predicate.History {
-	return predicate.History(func(s *sql.Selector) {
-		s.Where(sql.IsNull(s.C(FieldTakeEffectTime)))
-	})
-}
-
-// TakeEffectTimeNotNil applies the NotNil predicate on the "take_effect_time" field.
-func TakeEffectTimeNotNil() predicate.History {
-	return predicate.History(func(s *sql.Selector) {
-		s.Where(sql.NotNull(s.C(FieldTakeEffectTime)))
-	})
-}
-
 // SendingContentEQ applies the EQ predicate on the "sending_content" field.
 func SendingContentEQ(v []byte) predicate.History {
 	return predicate.History(func(s *sql.Selector) {

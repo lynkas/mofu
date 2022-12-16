@@ -143,12 +143,6 @@ func (hu *HistoryUpdate) SetNillableTakeEffectTime(t *time.Time) *HistoryUpdate 
 	return hu
 }
 
-// ClearTakeEffectTime clears the value of the "take_effect_time" field.
-func (hu *HistoryUpdate) ClearTakeEffectTime() *HistoryUpdate {
-	hu.mutation.ClearTakeEffectTime()
-	return hu
-}
-
 // SetSendingContent sets the "sending_content" field.
 func (hu *HistoryUpdate) SetSendingContent(b []byte) *HistoryUpdate {
 	hu.mutation.SetSendingContent(b)
@@ -329,12 +323,6 @@ func (hu *HistoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Column: history.FieldTakeEffectTime,
 		})
 	}
-	if hu.mutation.TakeEffectTimeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
-			Column: history.FieldTakeEffectTime,
-		})
-	}
 	if value, ok := hu.mutation.SendingContent(); ok {
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeBytes,
@@ -479,12 +467,6 @@ func (huo *HistoryUpdateOne) SetNillableTakeEffectTime(t *time.Time) *HistoryUpd
 	if t != nil {
 		huo.SetTakeEffectTime(*t)
 	}
-	return huo
-}
-
-// ClearTakeEffectTime clears the value of the "take_effect_time" field.
-func (huo *HistoryUpdateOne) ClearTakeEffectTime() *HistoryUpdateOne {
-	huo.mutation.ClearTakeEffectTime()
 	return huo
 }
 
@@ -695,12 +677,6 @@ func (huo *HistoryUpdateOne) sqlSave(ctx context.Context) (_node *History, err e
 		_spec.Fields.Set = append(_spec.Fields.Set, &sqlgraph.FieldSpec{
 			Type:   field.TypeTime,
 			Value:  value,
-			Column: history.FieldTakeEffectTime,
-		})
-	}
-	if huo.mutation.TakeEffectTimeCleared() {
-		_spec.Fields.Clear = append(_spec.Fields.Clear, &sqlgraph.FieldSpec{
-			Type:   field.TypeTime,
 			Column: history.FieldTakeEffectTime,
 		})
 	}

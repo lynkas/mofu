@@ -211,6 +211,10 @@ func (hc *HistoryCreate) defaults() {
 		v := history.DefaultMentionedCount
 		hc.mutation.SetMentionedCount(v)
 	}
+	if _, ok := hc.mutation.TakeEffectTime(); !ok {
+		v := history.DefaultTakeEffectTime
+		hc.mutation.SetTakeEffectTime(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -226,6 +230,9 @@ func (hc *HistoryCreate) check() error {
 	}
 	if _, ok := hc.mutation.MentionedCount(); !ok {
 		return &ValidationError{Name: "mentioned_count", err: errors.New(`ent: missing required field "History.mentioned_count"`)}
+	}
+	if _, ok := hc.mutation.TakeEffectTime(); !ok {
+		return &ValidationError{Name: "take_effect_time", err: errors.New(`ent: missing required field "History.take_effect_time"`)}
 	}
 	return nil
 }

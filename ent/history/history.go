@@ -63,4 +63,6 @@ var (
 	UpdateDefaultLastUpdate func() time.Time
 	// DefaultMentionedCount holds the default value on creation for the "mentioned_count" field.
 	DefaultMentionedCount int
+	// DefaultTakeEffectTime holds the default value on creation for the "take_effect_time" field.
+	DefaultTakeEffectTime time.Time
 )

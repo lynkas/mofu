@@ -67,7 +67,7 @@ func (c *Core) Auth(ctx context.Context, token string) *string {
 func (c *Core) ListHistory(ctx context.Context, timeBefore *int64, offset, limit int) ([]*ent.History, error) {
 	q := c.db.History.Query()
 	if timeBefore != nil {
-		q = q.Where(history.Or(history.TakeEffectTimeIsNil(), history.TakeEffectTimeLTE(time.Unix(*timeBefore/1000, 0))))
+		q = q.Where(history.TakeEffectTimeLTE(time.Unix(*timeBefore/1000, 0)))
 	}
 	return q.Where(history.MentionedCountGTE(2)).Offset(offset).Limit(limit).Order(ent.Desc(history.FieldTakeEffectTime), ent.Desc(history.FieldCreateAt)).All(ctx)
 }
