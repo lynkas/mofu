@@ -12,6 +12,8 @@ type IWeb interface {
 	Auth(ctx context.Context, token string) *string
 	UpdateHistoryFlag(id string, sent, nsfw int, operator string) (value.IMessage, error)
 	ListHistory(ctx context.Context, timeBefore *int64, offset, limit int) ([]*ent.History, error)
+	QueryAuthor(ctx context.Context, name string) ([]*ent.Author, error)
+	QueryAuthorMedia(ctx context.Context, id string, limit, offset int) ([]*ent.History, error)
 }
 
 func New(auth IWeb) *gin.Engine {
@@ -32,6 +34,12 @@ func New(auth IWeb) *gin.Engine {
 	})
 	g.GET("/", func(context *gin.Context) {
 		list(context, auth)
+	})
+	g.GET("/author/", func(context *gin.Context) {
+		author(context, auth)
+	})
+	g.GET("/author/:user/", func(context *gin.Context) {
+		authorMedia(context, auth)
 	})
 
 	return g
@@ -89,4 +97,31 @@ func list(ctx *gin.Context, functions IWeb) {
 		return
 	}
 	ctx.JSON(http.StatusOK, msg)
+}
+
+func author(ctx *gin.Context, functions IWeb) {
+	name := ctx.Param("username")
+
+	author, err := functions.QueryAuthor(ctx, name)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+	}
+	ctx.JSON(http.StatusOK, author)
+}
+
+func authorMedia(ctx *gin.Context, functions IWeb) {
+	name := ctx.Query("user")
+	var q query
+	err := ctx.ShouldBindQuery(&q)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+	}
+	if q.Limit <= 0 || q.Limit >= 100 {
+		q.Limit = 100
+	}
+	media, err := functions.QueryAuthorMedia(ctx, name, q.Limit, q.Offset)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+	}
+	ctx.JSON(http.StatusOK, media)
 }

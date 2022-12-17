@@ -21,13 +21,13 @@ type IMessageUpdater interface {
 
 type MessageUpdater struct {
 	*utils.PeriodFrequency
-	db *ent.Client
+	*Core
 }
 
-func NewMessageUpdater(count int, gap time.Duration, db *ent.Client) *MessageUpdater {
+func NewMessageUpdater(count int, gap time.Duration, c *Core) *MessageUpdater {
 	return &MessageUpdater{
 		PeriodFrequency: utils.NewFrequencyLimit(count, gap),
-		db:              db,
+		Core:            c,
 	}
 }
 
@@ -122,6 +122,9 @@ func (s *DecideUpdater) After(history *ent.History) error {
 		return nil
 	}
 	err := s.db.History.UpdateOne(history).SetSentFlag(value.Controlled).Exec(context.Background())
+	media := tw.SingleMediaResultFrom(history.SendingContent)
+	s.Core.addAuthor(media.Author().ID(), media.Author().Username())
+	s.Core.addAuthor(media.Broadcast().ID(), media.Broadcast().Username())
 	return err
 }
 

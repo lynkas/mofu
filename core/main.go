@@ -12,6 +12,7 @@ import (
 	"golang.org/x/exp/slices"
 	"mofu/ent"
 	"mofu/ent/auth"
+	"mofu/ent/author"
 	"mofu/ent/history"
 	"mofu/ent/subscription"
 	"mofu/tw"
@@ -279,7 +280,7 @@ func (c *Core) updateSubscribe() bool {
 }
 
 func (c *Core) updateControl() {
-	updater := NewMessageUpdater(10, time.Second, c.db)
+	updater := NewMessageUpdater(10, time.Second, c)
 	for {
 		updater := NewDecideUpdater(updater)
 		updated := UpdaterFunc(updater, c.decide)
@@ -292,7 +293,7 @@ func (c *Core) updateSend() {
 	for {
 		//TODO
 		prevSendGap := c.setting.GetDuration(SendingGap, time.Minute*15)
-		updater := NewMessageUpdater(1, prevSendGap, c.db)
+		updater := NewMessageUpdater(1, prevSendGap, c)
 		for {
 			updater := NewSendUpdater(updater,
 				c.setting.GetDuration(WaitBeforeDecided, time.Minute*15),
@@ -449,4 +450,31 @@ func (c *Core) WebDestroy(key string) (value.IMessage, error) {
 	}
 	return value.NewText("删了"), nil
 
+}
+func (c *Core) QueryAuthor(ctx context.Context, name string) ([]*ent.Author, error) {
+	return c.db.Author.Query().Where(author.UserNameContains(name)).Limit(10).All(ctx)
+}
+
+func (c *Core) QueryAuthorMedia(ctx context.Context, id string, limit, offset int) ([]*ent.History, error) {
+	return c.db.History.Query().Where(history.CreatorID(id)).Limit(limit).Offset(offset).All(ctx)
+}
+
+func (c *Core) addAuthor(id, name string) error {
+	ctx := context.Background()
+	author, err := c.db.Author.Query().Where(author.UserID(id)).Only(ctx)
+	if ent.IsNotFound(err) {
+		creator := c.db.Author.Create()
+		authorUpdater(creator.Mutation(), id, name)
+		_, err = creator.Save(ctx)
+	} else {
+		updater := author.Update()
+		authorUpdater(updater.Mutation(), id, name)
+		_, err = updater.Save(ctx)
+	}
+	return err
+}
+
+func authorUpdater(a *ent.AuthorMutation, id, name string) {
+	a.SetUserID(id)
+	a.SetUserName(name)
 }

@@ -14,6 +14,8 @@ type Tx struct {
 	config
 	// Auth is the client for interacting with the Auth builders.
 	Auth *AuthClient
+	// Author is the client for interacting with the Author builders.
+	Author *AuthorClient
 	// History is the client for interacting with the History builders.
 	History *HistoryClient
 	// Setting is the client for interacting with the Setting builders.
@@ -156,6 +158,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Auth = NewAuthClient(tx.config)
+	tx.Author = NewAuthorClient(tx.config)
 	tx.History = NewHistoryClient(tx.config)
 	tx.Setting = NewSettingClient(tx.config)
 	tx.Subscription = NewSubscriptionClient(tx.config)

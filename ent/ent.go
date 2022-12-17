@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"mofu/ent/auth"
+	"mofu/ent/author"
 	"mofu/ent/history"
 	"mofu/ent/setting"
 	"mofu/ent/subscription"
@@ -35,6 +36,7 @@ type OrderFunc func(*sql.Selector)
 func columnChecker(table string) func(string) error {
 	checks := map[string]func(string) bool{
 		auth.Table:         auth.ValidColumn,
+		author.Table:       author.ValidColumn,
 		history.Table:      history.ValidColumn,
 		setting.Table:      setting.ValidColumn,
 		subscription.Table: subscription.ValidColumn,

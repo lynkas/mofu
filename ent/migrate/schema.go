@@ -20,6 +20,18 @@ var (
 		Columns:    AuthsColumns,
 		PrimaryKey: []*schema.Column{AuthsColumns[0]},
 	}
+	// AuthorsColumns holds the columns for the "authors" table.
+	AuthorsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "user_id", Type: field.TypeString, Unique: true},
+		{Name: "user_name", Type: field.TypeString},
+	}
+	// AuthorsTable holds the schema information for the "authors" table.
+	AuthorsTable = &schema.Table{
+		Name:       "authors",
+		Columns:    AuthorsColumns,
+		PrimaryKey: []*schema.Column{AuthorsColumns[0]},
+	}
 	// HistoriesColumns holds the columns for the "histories" table.
 	HistoriesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
@@ -89,6 +101,7 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AuthsTable,
+		AuthorsTable,
 		HistoriesTable,
 		SettingsTable,
 		SubscriptionsTable,

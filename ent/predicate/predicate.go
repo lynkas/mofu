@@ -9,6 +9,9 @@ import (
 // Auth is the predicate function for auth builders.
 type Auth func(*sql.Selector)
 
+// Author is the predicate function for author builders.
+type Author func(*sql.Selector)
+
 // History is the predicate function for history builders.
 type History func(*sql.Selector)
 
