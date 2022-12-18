@@ -42,6 +42,7 @@ func create() {
 	if err != nil {
 		panic(err)
 	}
+	//client = client.Debug()
 	err = client.Schema.Create(context.Background())
 	if err != nil {
 		panic(err)

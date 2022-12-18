@@ -100,7 +100,7 @@ func list(ctx *gin.Context, functions IWeb) {
 }
 
 func author(ctx *gin.Context, functions IWeb) {
-	name := ctx.Param("username")
+	name := ctx.Query("username")
 
 	author, err := functions.QueryAuthor(ctx, name)
 	if err != nil {
@@ -110,7 +110,7 @@ func author(ctx *gin.Context, functions IWeb) {
 }
 
 func authorMedia(ctx *gin.Context, functions IWeb) {
-	name := ctx.Query("user")
+	name := ctx.Param("user")
 	var q query
 	err := ctx.ShouldBindQuery(&q)
 	if err != nil {

@@ -452,7 +452,7 @@ func (c *Core) WebDestroy(key string) (value.IMessage, error) {
 
 }
 func (c *Core) QueryAuthor(ctx context.Context, name string) ([]*ent.Author, error) {
-	return c.db.Author.Query().Where(author.UserNameContains(name)).Limit(10).All(ctx)
+	return c.db.Author.Query().Where(author.UserNameContains(name)).Limit(10).Order(ent.Asc(author.FieldUserName)).All(ctx)
 }
 
 func (c *Core) QueryAuthorMedia(ctx context.Context, id string, limit, offset int) ([]*ent.History, error) {
